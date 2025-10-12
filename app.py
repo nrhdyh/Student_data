@@ -11,7 +11,7 @@ st.set_page_config(
 st.header("Genetic Algorithm", divider="gray")
 
 # Define the URL for the CSV file
-URL = 'https://raw.githubusercontent.com/nrhdyh/Student_data/refs/heads/main/arts_student_survey.csv'
+# URL = 'https://raw.githubusercontent.com/nrhdyh/Student_data/refs/heads/main/arts_student_survey.csv'
 
 # Set the title for the Streamlit app
 st.title("Arts Student Survey Analysis Dashboard 📊")
