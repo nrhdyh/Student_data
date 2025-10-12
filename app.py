@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 st.set_page_config(
     page_title="Scientific Visualization"
 )
@@ -87,5 +86,5 @@ if arts_df is not None:
     else:
         st.warning("The 'Gender' column was not found in the loaded data.")
 
-# Note: The original code used a variable named 'arts_df' for plotting, but defined 
+# Note: The original code used a variable named 'arts_df' for plotting, but defined
 # 'arts_df_url' for loading. The Streamlit code standardizes on 'arts_df'.
