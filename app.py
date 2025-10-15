@@ -164,7 +164,7 @@ if arts_df is not None:
 st.markdown("---")
 
     # --- FINAL INTERPRETATION SECTION (Based on User's Request) ---
-    st.header("Key Insights")
+
     
     st.markdown("""
     
