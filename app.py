@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import seaborn as sns
+import plotly.figure_factory as ff
 
 st.set_page_config(
     page_title="Scientific Visualization"
@@ -91,6 +92,65 @@ if arts_df is not None:
     else:
         st.warning("The 'Gender' column was not found in the loaded data. Cannot perform analysis.") 
 
+if arts_df_url.empty:
+    st.warning("Data not available for analysis.")
+else:
+    # --- 1. Data Preparation and Correlation Calculation ---
+    st.header("1. 📊 Correlation Analysis of Student Expectations and Satisfaction")
+    correlation_cols = [
+        'Q3 [What was your expectation about the University as related to quality of resources?]',
+        'Q4 [What was your expectation about the University as related to quality of learning environment?]',
+        'Q5 [To what extent your expectation was met?]',
+        'Q6 [What are the best aspects of the program?]'
+    ]
+
+    # Convert columns to numeric, coercing errors to NaN
+    df_corr = arts_df_url.copy()
+    for col in correlation_cols:
+        if col in df_corr.columns:
+            df_corr[col] = pd.to_numeric(df_corr[col], errors='coerce')
+        else:
+            st.error(f"Column '{col}' not found in the dataset. Please check the column names.")
+            st.stop() # Stop execution if critical columns are missing
+
+    # Calculate the correlation matrix, dropping rows with NaN
+    # Check if there's enough data left after dropping NaNs
+    if df_corr[correlation_cols].dropna().shape[0] < 2:
+        st.warning("Not enough complete data points to calculate correlation. Check for non-numeric values in the selected columns.")
+    else:
+        correlation_matrix = df_corr[correlation_cols].dropna().corr()
+        
+        st.subheader("Correlation Matrix")
+        st.dataframe(correlation_matrix.style.background_gradient(cmap='coolwarm').format("{:.2f}"))
+
+        # --- 2. Plotly Heatmap Generation ---
+        
+        # Extract data for the heatmap
+        z = correlation_matrix.values
+        x = correlation_matrix.columns.tolist()
+        y = correlation_matrix.index.tolist()
+
+        # Create the Plotly Heatmap using figure_factory for annotation support
+        fig = ff.create_annotated_heatmap(
+            z, 
+            x=x, 
+            y=y, 
+            annotation_text=z.round(2), # Display the correlation values on the map
+            colorscale='Coolwarm',
+            showscale=True
+        )
+
+        # Update layout for better readability
+        fig.update_layout(
+            title='Correlation Heatmap of Expectations and Satisfaction',
+            xaxis={'tickangle': 45, 'dtick': 1},
+            yaxis={'dtick': 1},
+            height=600
+        )
+        
+        # Display the Plotly figure in Streamlit
+        st.subheader("Interactive Correlation Heatmap")
+        st.plotly_chart(fig, use_container_width=True)
 
     # --- 2. Satisfaction Levels Analysis (Q5 & Q6) ---
     st.header("2. Program Satisfaction Levels")
