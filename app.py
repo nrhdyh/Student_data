@@ -164,7 +164,7 @@ if arts_df is not None:
 
     # --- FINAL INTERPRETATION SECTION (Based on User's Request) ---
 
-    
+    st.header("KEY INSIGHTS")
     st.markdown("""
     
     ### Gender Distribution and Academic Performance
