@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.figure_factory as ff
+#import plotly.figure_factory as ff
 # Note: seaborn import is unnecessary since you only use Plotly
 
 st.set_page_config(
