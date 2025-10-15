@@ -160,3 +160,21 @@ if arts_df is not None:
         st.plotly_chart(fig_imp, use_container_width=True)
     else:
         st.error(f"Column '{improvement_col}' not found.")
+
+st.markdown("---")
+
+    # --- FINAL INTERPRETATION SECTION (Based on User's Request) ---
+    st.header("Key Insights")
+    
+    st.markdown("""
+    
+    ### Gender Distribution and Academic Performance
+    The analysis clearly shows the **student population's gender split**, and the **Box and Violin Plots** reveal the distribution of **SSC and HSC GPAs** for both groups. This comparison helps identify any significant differences in academic entry levels between genders, though the plots themselves would determine if one group tends to have a higher median or wider variance in scores.
+
+    ### Expectation vs. Satisfaction
+    The bar chart for **'Q5 [To what extent your expectation was met?]'** is the most critical metric, showing the overall level of student satisfaction. If most responses fall under **'Very Satisfied' or 'Satisfied,'** the program is generally meeting student expectations, while the **'Q6 [What are the best aspects of the program?]'** bar chart points to the specific factors (e.g., faculty, resources) driving this positive experience.
+
+    ### Areas for Improvement
+    The visualization of **'What aspects of the program could be improved?'** provides actionable insights. The top-ranked items in this horizontal bar chart represent the areas where the university should allocate resources, as they are the most frequently cited pain points by the student body.
+    """)
+    # --- END OF FINAL INTERPRETATION SECTION ---
