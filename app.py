@@ -89,4 +89,144 @@ if arts_df is not None:
         st.plotly_chart(fig_bar, use_container_width=True)
 
     else:
-        st.warning("The 'Gender' column was not found in the loaded data. Cannot perform analysis.")
+        st.warning("The 'Gender' column was not found in the loaded data. Cannot perform analysis.") 
+
+
+    # --- 2. Satisfaction Levels Analysis (Q5 & Q6) ---
+    st.header("2. Program Satisfaction Levels")
+    satisfaction_cols = [
+        'Q5 [To what extent your expectation was met?]',
+        'Q6 [What are the best aspects of the program?]'
+    ]
+
+    col1, col2 = st.columns(2)
+
+    for i, col in enumerate(satisfaction_cols):
+        if col in arts_df.columns:
+            # Prepare data for Plotly Bar Chart (Equivalent to Count Plot)
+            counts = arts_df[col].value_counts().reset_index()
+            counts.columns = [col, 'Number of Students']
+
+            fig = px.bar(
+                counts,
+                x=col,
+                y='Number of Students',
+                color=col,
+                title=f'Distribution of Responses: {col}',
+                labels={'x': 'Rating/Aspect', 'y': 'Number of Students'}
+            )
+            fig.update_layout(xaxis={'categoryorder': 'total descending'})
+
+            # Display plot in the respective column
+            if i % 2 == 0:
+                with col1:
+                    st.subheader("Expectation Met (Q5)")
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                with col2:
+                    st.subheader("Best Aspects (Q6)")
+                    st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.error(f"Column '{col}' not found.")
+
+    st.markdown("---")
+
+    # --- 3. Academic Performance by Gender ---
+    st.header("3. Academic Performance Distributions by Gender")
+
+    # Box Plot for S.S.C (GPA) by Gender
+    st.subheader("S.S.C (GPA) by Gender (Box Plot)")
+    if 'Gender' in arts_df.columns and 'S.S.C (GPA)' in arts_df.columns:
+        fig_box = px.box(
+            arts_df,
+            x='Gender',
+            y='S.S.C (GPA)',
+            color='Gender',
+            title='Distribution of S.S.C (GPA) by Gender',
+            labels={'S.S.C (GPA)': 'S.S.C (CGPA)'}
+        )
+        st.plotly_chart(fig_box, use_container_width=True)
+
+    # Violin Plot for H.S.C (GPA) by Gender
+    st.subheader("H.S.C (GPA) by Gender (Violin Plot)")
+    if 'Gender' in arts_df.columns and 'H.S.C (GPA)' in arts_df.columns:
+        fig_violin = px.violin(
+            arts_df,
+            x='Gender',
+            y='H.S.C (GPA)',
+            color='Gender',
+            box=True,
+            title='Distribution of H.S.C (GPA) by Gender'
+        )
+        st.plotly_chart(fig_violin, use_container_width=True)
+    else:
+        st.error("Required columns for GPA plots not found.")
+
+    st.markdown("---")
+
+    # --- 4. Core Survey Questions (Indices 13-20) ---
+    st.header("4. Core Survey Question Distributions")
+
+    # Get columns by index (13 to 20 are indices 13, 14, ..., 20)
+    columns_to_visualize = arts_df.columns[13:21]
+    st.write(f"Columns analyzed: {list(columns_to_visualize)}")
+
+    for i, col in enumerate(columns_to_visualize):
+        st.subheader(f"Distribution: {col}")
+
+        # Check for numerical data (int64, float64)
+        if arts_df[col].dtype in ['int64', 'float64']:
+            # Numerical Visualization (Histogram)
+            fig_hist = px.histogram(
+                arts_df,
+                x=col,
+                marginal="box",
+                title=f'Distribution of {col}',
+                labels={col: col, 'count': 'Frequency'}
+            )
+            st.plotly_chart(fig_hist, use_container_width=True)
+
+        # Assuming other types (object/categorical) should be treated as categories
+        elif arts_df[col].dtype == 'object' or arts_df[col].nunique() < 20:
+            # Categorical/Ordinal Visualization (Bar Chart)
+            counts = arts_df[col].value_counts().reset_index()
+            counts.columns = [col, 'Number of Students']
+
+            fig_bar = px.bar(
+                counts,
+                x='Number of Students',
+                y=col,
+                color=col,
+                orientation='h',
+                title=f'Distribution of Responses for: {col}'
+            )
+            fig_bar.update_layout(yaxis={'categoryorder': 'total ascending'})
+            st.plotly_chart(fig_bar, use_container_width=True)
+        else:
+            st.info(f"Skipping visualization for column '{col}' (unsuitable data type or too many unique values).")
+
+    st.markdown("---")
+
+    # --- 5. Program Improvement Aspects ---
+    st.header("5. Program Improvement Aspects")
+    improvement_col = 'What aspects of the program could be improved?'
+
+    if improvement_col in arts_df.columns:
+        st.subheader(f"Frequency of Responses for: {improvement_col}")
+
+        # Create a horizontal bar chart
+        counts_imp = arts_df[improvement_col].value_counts().reset_index()
+        counts_imp.columns = [improvement_col, 'Number of Students']
+
+        fig_imp = px.bar(
+            counts_imp,
+            x='Number of Students',
+            y=improvement_col,
+            color=improvement_col,
+            orientation='h',
+            title='Most Frequently Mentioned Aspects for Program Improvement'
+        )
+        fig_imp.update_layout(yaxis={'categoryorder': 'total ascending'})
+        st.plotly_chart(fig_imp, use_container_width=True)
+    else:
+        st.error(f"Column '{improvement_col}' not found.")
