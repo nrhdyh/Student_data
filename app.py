@@ -160,8 +160,7 @@ if arts_df is not None:
         st.plotly_chart(fig_imp, use_container_width=True)
     else:
         st.error(f"Column '{improvement_col}' not found.")
-
-st.markdown("---")
+ 
 
     # --- FINAL INTERPRETATION SECTION (Based on User's Request) ---
 
