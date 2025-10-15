@@ -69,50 +69,8 @@ if arts_df is not None:
     # --- START OF PREVIOUSLY FAILED/INCORRECTLY REFERENCED SECTION ---
     # The 'if arts_df_url.empty' block is removed, and all subsequent code uses arts_df.
 
-    # 1. Correlation Analysis
-    st.header("1. 📊 Correlation Analysis of Student Expectations and Satisfaction")
-    correlation_cols = [
-        'Q3 [What was your expectation about the University as related to quality of resources?]',
-        'Q4 [What was your expectation about the University as related to quality of learning environment?]',
-        'Q5 [To what extent your expectation was met?]',
-        'Q6 [What are the best aspects of the program?]'
-    ]
-
-    df_corr = arts_df.copy() # CORRECT: Use arts_df
-    all_cols_exist = True
-    for col in correlation_cols:
-        if col in df_corr.columns:
-            # Corrected: Only convert to numeric if the column is present
-            df_corr[col] = pd.to_numeric(df_corr[col], errors='coerce')
-        else:
-            st.error(f"Column '{col}' not found for correlation analysis.")
-            all_cols_exist = False
-            break
-
-    if all_cols_exist:
-        if df_corr[correlation_cols].dropna().shape[0] < 2:
-            st.warning("Not enough complete data points to calculate correlation. Check for non-numeric values.")
-        else:
-            correlation_matrix = df_corr[correlation_cols].dropna().corr()
-            st.subheader("Correlation Matrix")
-            st.dataframe(correlation_matrix.style.background_gradient(cmap='coolwarm').format("{:.2f}"))
-
-            # Plotly Heatmap Generation
-            z = correlation_matrix.values
-            x = correlation_matrix.columns.tolist()
-            y = correlation_matrix.index.tolist()
-
-            fig_corr = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z.round(2),
-                                                   colorscale='Coolwarm', showscale=True)
-            fig_corr.update_layout(title='Correlation Heatmap of Expectations and Satisfaction',
-                                   xaxis={'tickangle': 45, 'dtick': 1}, yaxis={'dtick': 1}, height=600)
-            st.subheader("Interactive Correlation Heatmap")
-            st.plotly_chart(fig_corr, use_container_width=True)
-
-    st.markdown("---")
-
-    # 2. Satisfaction Levels Analysis (Q5 & Q6)
-    st.header("2. Program Satisfaction Levels")
+    # 1. Satisfaction Levels Analysis (Q5 & Q6)
+    st.header("1. Program Satisfaction Levels")
     satisfaction_cols = ['Q5 [To what extent your expectation was met?]', 'Q6 [What are the best aspects of the program?]']
     col1, col2 = st.columns(2)
 
@@ -139,17 +97,17 @@ if arts_df is not None:
     st.markdown("---")
 
     # 3. Academic Performance by Gender
-    st.header("3. Academic Performance Distributions by Gender")
+    st.header("Academic Performance Distributions by Gender")
 
     # Box Plot for S.S.C (GPA) by Gender
-    st.subheader("S.S.C (GPA) by Gender (Box Plot)")
+    st.subheader("2. S.S.C (GPA) by Gender (Box Plot)")
     if 'Gender' in arts_df.columns and 'S.S.C (GPA)' in arts_df.columns: # CORRECT: Use arts_df
         fig_box = px.box(arts_df, x='Gender', y='S.S.C (GPA)', color='Gender',
                          title='Distribution of S.S.C (GPA) by Gender', labels={'S.S.C (GPA)': 'S.S.C (CGPA)'})
         st.plotly_chart(fig_box, use_container_width=True)
 
     # Violin Plot for H.S.C (GPA) by Gender
-    st.subheader("H.S.C (GPA) by Gender (Violin Plot)")
+    st.subheader("3. H.S.C (GPA) by Gender (Violin Plot)")
     if 'Gender' in arts_df.columns and 'H.S.C (GPA)' in arts_df.columns: # CORRECT: Use arts_df
         fig_violin = px.violin(arts_df, x='Gender', y='H.S.C (GPA)', color='Gender', box=True,
                                title='Distribution of H.S.C (GPA) by Gender')
